@@ -1,11 +1,8 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { SendEmailSchema, sendEmail } from './gmail.js';
+import { SendSmsSchema, sendSms } from './sms.js';
 
-/**
- * Register all tools with the MCP server instance
- */
 export function registerTools(server: McpServer): void {
-  // Register send_email tool
   server.tool(
     'send_email',
     'Send an email via Gmail',
@@ -16,31 +13,29 @@ export function registerTools(server: McpServer): void {
     },
     async (params) => {
       try {
-        // Validate parameters with Zod
-        const validatedParams = SendEmailSchema.parse(params);
-
-        // Send email
-        const result = await sendEmail(validatedParams);
-
-        return {
-          content: [
-            {
-              type: 'text' as const,
-              text: result,
-            },
-          ],
-        };
+        const result = await sendEmail(SendEmailSchema.parse(params));
+        return { content: [{ type: 'text' as const, text: result }] };
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: 'text' as const,
-              text: `Error: ${errorMessage}`,
-            },
-          ],
-          isError: true,
-        };
+        return { content: [{ type: 'text' as const, text: `Error: ${errorMessage}` }], isError: true };
+      }
+    }
+  );
+
+  server.tool(
+    'send_sms',
+    'Send an SMS via Twilio',
+    {
+      to: SendSmsSchema.shape.to,
+      body: SendSmsSchema.shape.body,
+    },
+    async (params) => {
+      try {
+        const result = await sendSms(SendSmsSchema.parse(params));
+        return { content: [{ type: 'text' as const, text: result }] };
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        return { content: [{ type: 'text' as const, text: `Error: ${errorMessage}` }], isError: true };
       }
     }
   );
