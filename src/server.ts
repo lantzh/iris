@@ -57,7 +57,7 @@ app.get("/mcp", handleMcpRequest);
 app.delete("/mcp", handleMcpRequest);
 
 // Start the server and keep reference to prevent exit
-const server = app.listen(PORT, () => {
+const server = app.listen(Number(PORT), "0.0.0.0", () => {
   console.log(`🌸 Iris MCP Server running on port ${PORT}`);
   console.log(`📍 MCP endpoint: http://localhost:${PORT}/mcp`);
   console.log(`🔒 API key authentication enabled`);
