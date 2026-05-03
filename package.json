@@ -6,10 +6,16 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "postinstall": "tsc",
     "start": "node dist/server.js",
     "dev": "tsx src/server.ts"
   },
-  "keywords": ["mcp", "gmail", "email", "server"],
+  "keywords": [
+    "mcp",
+    "gmail",
+    "email",
+    "server"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
