@@ -22,7 +22,7 @@ const authenticateApiKey = (
   res: Response,
   next: NextFunction,
 ): void => {
-  const providedKey = req.headers["x-api-key"];
+  const providedKey = req.headers["x-api-key"] || req.query.key;
 
   if (!providedKey || providedKey !== API_KEY) {
     res.status(401).json({ error: "Unauthorized: Invalid or missing API key" });
@@ -62,20 +62,3 @@ const server = app.listen(PORT, () => {
   console.log(`📍 MCP endpoint: http://localhost:${PORT}/mcp`);
   console.log(`🔒 API key authentication enabled`);
 });
-
-// // Handle graceful shutdown
-// process.on("SIGTERM", async () => {
-//   console.log("SIGTERM received, shutting down gracefully");
-//   server.close(() => {
-//     console.log("Server closed");
-//     process.exit(0);
-//   });
-// });
-
-// process.on("SIGINT", async () => {
-//   console.log("\nSIGINT received, shutting down gracefully");
-//   server.close(() => {
-//     console.log("Server closed");
-//     process.exit(0);
-//   });
-// });
