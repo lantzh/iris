@@ -1,13 +1,13 @@
-import { z } from 'zod';
-import { getGmailApi } from '../auth/gmail.js';
+import { z } from "zod";
+import { getGmailApi } from "../auth/gmail.js";
 
 /**
  * Zod schema for send_email tool parameters
  */
 export const SendEmailSchema = z.object({
-  to: z.string().email().describe('Recipient email address'),
-  subject: z.string().describe('Email subject line'),
-  body: z.string().describe('Email body content (plain text)'),
+  to: z.string().describe("Recipient email address"),
+  subject: z.string().describe("Email subject line"),
+  body: z.string().describe("Email body content (plain text)"),
 });
 
 export type SendEmailParams = z.infer<typeof SendEmailSchema>;
@@ -24,21 +24,21 @@ export async function sendEmail(params: SendEmailParams): Promise<string> {
   const email = [
     `To: ${to}`,
     `Subject: ${subject}`,
-    'Content-Type: text/plain; charset=utf-8',
-    '',
+    "Content-Type: text/plain; charset=utf-8",
+    "",
     body,
-  ].join('\n');
+  ].join("\n");
 
   // Encode email to base64url format
   const encodedEmail = Buffer.from(email)
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
 
   try {
     const response = await gmail.users.messages.send({
-      userId: 'me',
+      userId: "me",
       requestBody: {
         raw: encodedEmail,
       },
