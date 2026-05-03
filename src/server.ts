@@ -16,6 +16,11 @@ if (!API_KEY) {
 const app = express();
 app.use(express.json());
 
+//Health check endpoint
+app.get("/health", (req: Request, res: Response) => {
+  res.json({ status: "ok", server: "iris", version: "1.0.0" });
+});
+
 // API key authentication middleware
 const authenticateApiKey = (
   req: Request,
@@ -37,11 +42,6 @@ if (process.env.DISABLE_AUTH !== "true") {
   app.use(authenticateApiKey);
 }
 
-//Health check endpoint
-app.get("/health", (req: Request, res: Response) => {
-  res.json({ status: "ok", server: "iris", version: "1.0.0" });
-});
-
 async function handleMcpRequest(req: Request, res: Response): Promise<void> {
   const transport = new StreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
@@ -61,4 +61,11 @@ const server = app.listen(Number(PORT), "0.0.0.0", () => {
   console.log(`🌸 Iris MCP Server running on port ${PORT}`);
   console.log(`📍 MCP endpoint: http://localhost:${PORT}/mcp`);
   console.log(`🔒 API key authentication enabled`);
+});
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught exception:", err);
+});
+
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled rejection:", reason);
 });
